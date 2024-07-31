@@ -1,6 +1,8 @@
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 #endif
 using UnityEngine;
 
@@ -8,8 +10,17 @@ namespace Scenes
 {
     [DefaultExecutionOrder(-10000)]
     public class ScriptableObjectTest : ScriptableObject
-    {
 #if UNITY_EDITOR
+        , IPreprocessBuildWithReport
+#endif
+    {
+#if UNITY_EDITOR      
+        public int callbackOrder { get { return 0; } }
+        public void OnPreprocessBuild(BuildReport report)
+        {
+            CheckCreated();
+        }
+        
         const string path = "Assets/" + nameof(ScriptableObjectTest) + ".asset";
         [InitializeOnLoadMethod]
         static void CheckCreated()
